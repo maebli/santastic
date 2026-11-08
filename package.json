@@ -6,12 +6,17 @@
   "scripts": {
     "dev": "python3 -m http.server 5173 --directory public --bind 127.0.0.1",
     "check": "eslint . && prettier --check .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "test": "node --test tests/*.test.js",
+    "build:api": "wrangler deploy --dry-run --outdir dist/api",
+    "deploy:api": "wrangler deploy",
+    "configure:api": "node scripts/configure-api.js"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.0",
     "eslint": "^9.39.0",
     "globals": "^16.5.0",
-    "prettier": "^3.6.2"
+    "prettier": "^3.6.2",
+    "wrangler": "^4.158.0"
   }
 }

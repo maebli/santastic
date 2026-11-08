@@ -1,3 +1,5 @@
+import { isValidTime } from "./date.js";
+
 function randomIndex(length) {
   const range = 2 ** 32;
   const limit = range - (range % length);
@@ -79,8 +81,8 @@ export function decodeReveal(value) {
     ),
   );
   const fields = {
-    giver: 60,
-    recipient: 60,
+    giver: 254,
+    recipient: 254,
     wish: 300,
     round: 80,
     date: 10,
@@ -89,6 +91,11 @@ export function decodeReveal(value) {
     message: 500,
   };
   if (!data || data.version !== 1) throw new Error("Ungültiger Link");
+  if (
+    data.time !== undefined &&
+    (typeof data.time !== "string" || !isValidTime(data.time))
+  )
+    throw new Error("Ungültige Uhrzeit");
   for (const [field, maxLength] of Object.entries(fields)) {
     if (typeof data[field] !== "string" || data[field].length > maxLength)
       throw new Error("Ungültiger Link");

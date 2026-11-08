@@ -6,12 +6,12 @@
     <meta name="theme-color" content="#f7f8f5" />
     <meta
       name="description"
-      content="Wichtelgruppen mit 3 bis 50 Personen auslosen. Mit Wunschzetteln, Ausschlüssen und persönlichen Ergebnislinks, ohne Anmeldung."
+      content="Wichtelgruppen mit 3 bis 50 Personen auslosen. Mit Wunschzetteln, Ausschlüssen und persönlichen Losen per E-Mail."
     />
     <meta name="referrer" content="no-referrer" />
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'"
+      content="default-src 'self'; script-src 'self' https://challenges.cloudflare.com; style-src 'self'; img-src 'self'; connect-src 'self' https://challenges.cloudflare.com; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'none'; form-action 'none'"
     />
     <title>Santastic — Wichteln auslosen</title>
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
@@ -37,9 +37,9 @@
         <section class="hero shell" aria-labelledby="hero-title">
           <h1 id="hero-title">Wichteln auslosen</h1>
           <p>
-            Trage die Namen eurer Gruppe ein und lege bei Bedarf ein Budget und
-            Ausschlüsse fest. Nach der Auslosung erhält jede Person einen
-            eigenen Link mit ihrer Zuordnung.
+            Trage die E-Mail-Adressen eurer Gruppe ein und lege bei Bedarf ein
+            Budget und Ausschlüsse fest. Santastic schickt jeder Person einen
+            eigenen Link mit ihrer Zuordnung per E-Mail.
           </p>
         </section>
         <section
@@ -54,162 +54,227 @@
               optional.
             </p>
             <p>
-              Die Auslosung findet in deinem Browser statt. Du teilst die
-              Ergebnislinks selbst; Santastic verschickt keine E-Mails.
+              Bestätige zuerst deine E-Mail-Adresse. Danach kannst du die Runde
+              erstellen und die Lose versenden.
             </p>
           </aside>
           <div class="builder-card">
-            <ol class="wizard-progress" aria-label="Fortschritt">
-              <li class="active" aria-current="step"><span>1</span>Runde</li>
-              <li><span>2</span>Personen</li>
-              <li><span>3</span>Ergebnis</li>
-            </ol>
-            <form id="round-form">
-              <section id="details-panel" aria-labelledby="details-title">
-                <div class="panel-heading">
-                  <h3 id="details-title" tabindex="-1">Angaben zur Runde</h3>
-                  <p>Name, Termin und Budget für eure Gruppe.</p>
-                </div>
-                <label for="round-name">Name der Runde</label
-                ><input
-                  id="round-name"
-                  name="roundName"
-                  placeholder="Zum Beispiel: Weihnachten bei uns"
-                  maxlength="80"
+            <section
+              id="verification-panel"
+              aria-labelledby="verification-title"
+            >
+              <h3 id="verification-title">Deine E-Mail-Adresse</h3>
+              <p>
+                Wir schicken dir einen Bestätigungslink. Er gilt eine Stunde.
+              </p>
+              <form id="verification-form">
+                <label for="organizer-email"
+                  >E-Mail-Adresse der Organisation</label
+                >
+                <input
+                  id="organizer-email"
+                  type="email"
+                  autocomplete="email"
+                  maxlength="254"
                   required
-                  autocomplete="off"
+                  placeholder="name@beispiel.de"
                 />
-                <div class="field-grid">
-                  <div>
-                    <label for="round-date">Datum <span>optional</span></label
-                    ><input
-                      id="round-date"
-                      name="date"
-                      type="date"
-                      max="9999-12-31"
-                    />
+                <div id="verification-challenge" class="challenge"></div>
+                <button
+                  id="verify-email"
+                  class="button primary"
+                  type="submit"
+                  disabled
+                >
+                  Bestätigungslink senden
+                </button>
+              </form>
+              <p
+                id="verification-status"
+                class="form-status"
+                role="status"
+                aria-live="polite"
+              >
+                E-Mail-Dienst wird geprüft.
+              </p>
+            </section>
+            <div id="round-builder" hidden>
+              <p id="verified-organizer" class="inline-notice"></p>
+              <ol class="wizard-progress" aria-label="Fortschritt">
+                <li class="active" aria-current="step"><span>1</span>Runde</li>
+                <li><span>2</span>Personen</li>
+                <li><span>3</span>Versand</li>
+              </ol>
+              <form id="round-form">
+                <section id="details-panel" aria-labelledby="details-title">
+                  <div class="panel-heading">
+                    <h3 id="details-title" tabindex="-1">Angaben zur Runde</h3>
+                    <p>Name, Termin und Budget für eure Gruppe.</p>
                   </div>
-                  <div>
-                    <label for="budget"
-                      >Geschenkbudget <span>optional</span></label
-                    >
-                    <div class="budget-field">
-                      <input
-                        id="budget"
-                        name="budget"
-                        type="number"
-                        min="0"
-                        max="10000"
-                        step="0.01"
-                        placeholder="25"
-                      /><select
-                        id="currency"
-                        name="currency"
-                        aria-label="Währung"
+                  <label for="round-name">Name der Runde</label
+                  ><input
+                    id="round-name"
+                    name="roundName"
+                    placeholder="Zum Beispiel: Weihnachten bei uns"
+                    maxlength="80"
+                    required
+                    autocomplete="off"
+                  />
+                  <div class="field-grid">
+                    <div>
+                      <label for="round-date">Datum <span>optional</span></label
+                      ><input
+                        id="round-date"
+                        name="date"
+                        type="text"
+                        placeholder="TT.MM.JJJJ"
+                        pattern="[0-9]{2}\.[0-9]{2}\.[0-9]{4}"
+                        maxlength="10"
+                        autocomplete="off"
+                      />
+                    </div>
+                    <div>
+                      <label for="round-time"
+                        >Uhrzeit <span>optional</span></label
                       >
-                        <option>EUR</option>
-                        <option>CHF</option>
-                        <option>USD</option>
-                      </select>
+                      <input
+                        id="round-time"
+                        name="time"
+                        type="text"
+                        placeholder="HH:MM"
+                        pattern="([01][0-9]|2[0-3]):[0-5][0-9]"
+                        maxlength="5"
+                        autocomplete="off"
+                      />
+                    </div>
+                    <div>
+                      <label for="budget"
+                        >Geschenkbudget <span>optional</span></label
+                      >
+                      <div class="budget-field">
+                        <input
+                          id="budget"
+                          name="budget"
+                          type="number"
+                          min="0"
+                          max="10000"
+                          step="0.01"
+                          placeholder="25"
+                        /><select
+                          id="currency"
+                          name="currency"
+                          aria-label="Währung"
+                        >
+                          <option>EUR</option>
+                          <option>CHF</option>
+                          <option>USD</option>
+                        </select>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <label for="round-message"
-                  >Eine Nachricht an alle <span>optional</span></label
-                ><textarea
-                  id="round-message"
-                  name="message"
-                  rows="3"
-                  maxlength="500"
-                  placeholder="Zum Beispiel: Wir tauschen die Geschenke beim Abendessen."
-                ></textarea>
-                <div class="form-footer">
-                  <button class="button primary" type="submit">Weiter</button>
-                </div>
-              </section>
-              <section id="people-panel" hidden aria-labelledby="people-title">
-                <div class="panel-heading">
-                  <h3 id="people-title" tabindex="-1">Personen</h3>
-                  <p>Trage die Namen ein. Wunschzettel sind optional.</p>
-                </div>
-                <div id="participants"></div>
-                <button id="add-person" class="button add-button" type="button">
-                  <span aria-hidden="true">＋</span> Person hinzufügen
-                </button>
-                <details class="exclusions">
-                  <summary>Wer soll sich nicht gegenseitig ziehen?</summary>
-                  <p>Zum Beispiel Paare oder Menschen aus einem Haushalt.</p>
-                  <div class="exclusion-selects">
-                    <select
-                      id="exclude-first"
-                      aria-label="Erste Person"
-                    ></select
-                    ><span aria-hidden="true">↔</span
-                    ><select
-                      id="exclude-second"
-                      aria-label="Zweite Person"
-                    ></select
+                  <label for="round-message"
+                    >Eine Nachricht an alle <span>optional</span></label
+                  ><textarea
+                    id="round-message"
+                    name="message"
+                    rows="3"
+                    maxlength="500"
+                    placeholder="Zum Beispiel: Wir tauschen die Geschenke beim Abendessen."
+                  ></textarea>
+                  <div class="form-footer">
+                    <button class="button primary" type="submit">Weiter</button>
+                  </div>
+                </section>
+                <section
+                  id="people-panel"
+                  hidden
+                  aria-labelledby="people-title"
+                >
+                  <div class="panel-heading">
+                    <h3 id="people-title" tabindex="-1">Personen</h3>
+                    <p>
+                      Jede Person braucht eine eigene E-Mail-Adresse. Namen und
+                      Wunschzettel sind optional.
+                    </p>
+                  </div>
+                  <div id="participants"></div>
+                  <button
+                    id="add-person"
+                    class="button add-button"
+                    type="button"
+                  >
+                    <span aria-hidden="true">＋</span> Person hinzufügen
+                  </button>
+                  <details class="exclusions">
+                    <summary>Wer soll sich nicht gegenseitig ziehen?</summary>
+                    <p>Zum Beispiel Paare oder Menschen aus einem Haushalt.</p>
+                    <div class="exclusion-selects">
+                      <select
+                        id="exclude-first"
+                        aria-label="Erste Person"
+                      ></select
+                      ><span aria-hidden="true">↔</span
+                      ><select
+                        id="exclude-second"
+                        aria-label="Zweite Person"
+                      ></select
+                      ><button
+                        type="button"
+                        id="add-exclusion"
+                        class="button secondary"
+                        aria-label="Ausschluss hinzufügen"
+                      >
+                        ＋
+                      </button>
+                    </div>
+                    <ul id="exclusion-list"></ul>
+                  </details>
+                  <p class="inline-notice">
+                    Die Gruppe erhält erst nach dem Absenden eine E-Mail. Trage
+                    nur Personen ein, die an der Runde teilnehmen möchten.
+                  </p>
+                  <div id="round-challenge" class="challenge"></div>
+                  <div class="form-footer">
+                    <button type="button" id="back-details" class="text-button">
+                      ← Zurück</button
                     ><button
-                      type="button"
-                      id="add-exclusion"
-                      class="button secondary"
-                      aria-label="Ausschluss hinzufügen"
+                      type="submit"
+                      class="button primary"
+                      id="draw-button"
                     >
-                      ＋
+                      Auslosen und E-Mails senden
                     </button>
                   </div>
-                  <ul id="exclusion-list"></ul>
-                </details>
+                </section>
+              </form>
+              <section
+                id="results-panel"
+                hidden
+                aria-labelledby="results-title"
+              >
+                <div class="panel-heading">
+                  <h3 id="results-title" tabindex="-1">Versand beauftragt</h3>
+                  <p id="delivery-summary"></p>
+                </div>
+                <div id="result-list"></div>
                 <p class="inline-notice">
-                  Die Organisation kann alle Los-Links öffnen. Teile jeden Link
-                  nur mit der Person, für die er bestimmt ist.
+                  Die Annahme durch den E-Mail-Dienst bestätigt noch nicht die
+                  Zustellung. Prüft auch den Spamordner. Die Zuordnung bleibt
+                  beim erneuten Öffnen des Los-Links gleich.
                 </p>
                 <div class="form-footer">
-                  <button type="button" id="back-details" class="text-button">
-                    ← Zurück</button
-                  ><button
-                    type="submit"
-                    class="button primary"
-                    id="draw-button"
-                  >
-                    Auslosen
+                  <button id="restart" class="text-button" type="button">
+                    Neue Runde
                   </button>
                 </div>
               </section>
-            </form>
-            <section id="results-panel" hidden aria-labelledby="results-title">
-              <div class="panel-heading">
-                <span class="success-badge">✓ Ergebnis sind gezogen</span>
-                <h3 id="results-title" tabindex="-1">Ergebnislinks</h3>
-                <p>
-                  Schicke jeder Person ihren eigenen Link. Die Zuordnung bleibt
-                  beim erneuten Öffnen gleich.
-                </p>
-              </div>
-              <div id="result-list"></div>
-              <p class="inline-notice">
-                Speichere die Links vor dem Schließen dieser Seite. Sie werden
-                hier nicht dauerhaft gespeichert. Wer einen Link hat, kann das
-                Los sehen.
-              </p>
-              <div class="form-footer">
-                <button id="restart" class="text-button" type="button">
-                  Neue Runde</button
-                ><button
-                  id="download-links"
-                  class="button primary"
-                  type="button"
-                >
-                  Links speichern
-                </button>
-              </div>
-            </section>
-            <p
-              id="form-status"
-              class="form-status"
-              role="status"
-              aria-live="polite"
-            ></p>
+              <p
+                id="form-status"
+                class="form-status"
+                role="status"
+                aria-live="polite"
+              ></p>
+            </div>
           </div>
         </section>
         <section
@@ -226,16 +291,17 @@
               <p>
                 Jeder Los-Link enthält nur die Zuordnung für eine Person, den
                 Wunschzettel des Gegenübers und die Angaben zur Runde. Wer den
-                Link hat, kann diese Angaben lesen. Auch die Organisation hat
-                Zugriff auf alle Links. Die Links sind kein Passwortschutz.
+                Link hat, kann diese Angaben lesen. Die Organisation bekommt
+                keine Liste der Zuordnungen. Die Links sind kein Passwortschutz.
               </p>
             </details>
             <details>
               <summary>Verschickt Santastic automatisch E-Mails?</summary>
               <p>
-                Nein. Du kopierst die persönlichen Links und teilst sie selbst
-                über einen Messenger oder per E-Mail. So brauchen wir keine
-                E-Mail-Adressen.
+                Nach der Bestätigung deiner E-Mail-Adresse und dem Absenden der
+                Runde übernimmt Santastic den Versand. Ist der Dienst noch nicht
+                eingerichtet oder nicht erreichbar, zeigt das Formular dies an
+                und verschickt keine neuen E-Mails.
               </p>
             </details>
             <details>
@@ -250,12 +316,18 @@
             <details>
               <summary>Was passiert mit unseren Daten?</summary>
               <p>
-                Die Angaben bleiben während der Erstellung im Arbeitsspeicher
-                deines Browsers. Die Losdaten stehen im Teil des Links nach dem
-                #-Zeichen. Dieser Teil wird beim Seitenaufruf nicht an den
-                Hosting-Server gesendet. GitHub Pages stellt die Seite bereit
-                und verarbeitet dabei technische Zugriffsdaten. Wir verwenden
-                keine Analyse-Tools, Cookies oder externen Schriftarten.
+                Beim Absenden verarbeitet Cloudflare die Angaben für die
+                Auslosung. Resend verarbeitet E-Mail-Adressen und Nachrichten
+                für den Versand. Die App entfernt die gespeicherten Nachrichten
+                nach der Versandbestätigung oder spätestens nach 24 Stunden.
+                Technische Versanddaten bleiben bis zu 48 Stunden, Zähler für
+                Versandlimits bis zu 32 Tage gespeichert. Für gesperrte Adressen
+                bleibt eine verschlüsselt abgeleitete Kennung gespeichert. Die
+                Anbieter können Protokolle und Sicherungen länger aufbewahren.
+                Losdaten stehen im Teil des Links nach dem #-Zeichen. Dieser
+                Teil wird beim Seitenaufruf nicht an GitHub Pages gesendet.
+                Cloudflare Turnstile prüft Anfragen auf automatisierten
+                Missbrauch.
               </p>
             </details>
             <details>
@@ -292,6 +364,29 @@
           >
         </div>
       </section>
+      <section
+        id="block-view"
+        class="reveal-section shell"
+        hidden
+        aria-labelledby="block-title"
+      >
+        <div class="reveal-card">
+          <h1 id="block-title">E-Mails sperren</h1>
+          <p>
+            Danach erhält diese Adresse keine weiteren E-Mails von Santastic,
+            auch keine Bestätigungslinks.
+          </p>
+          <button id="block-email" class="button primary" type="button">
+            Weitere E-Mails sperren
+          </button>
+          <p
+            id="block-status"
+            class="form-status"
+            role="status"
+            aria-live="polite"
+          ></p>
+        </div>
+      </section>
     </main>
     <footer class="site-footer shell">
       <a class="brand" href="./">santastic<span class="brand-dot">.</span></a>
@@ -300,8 +395,8 @@
     <dialog id="restart-dialog">
       <h3>Eine neue Runde starten?</h3>
       <p>
-        Speichere zuerst deine aktuellen Los-Links. Die alten Links bleiben
-        gültig.
+        Eine neue Runde erzeugt neue Zuordnungen. Die bereits verschickten
+        Los-Links bleiben gültig.
       </p>
       <div class="dialog-actions">
         <button id="cancel-restart" class="button secondary" type="button">
@@ -313,8 +408,7 @@
     </dialog>
     <noscript
       ><p class="noscript-notice">
-        Bitte aktiviere JavaScript, damit die Auslosung in deinem Browser
-        stattfinden kann.
+        Bitte aktiviere JavaScript, um eine Wichtelrunde zu erstellen.
       </p></noscript
     >
   </body>

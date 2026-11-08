@@ -304,6 +304,14 @@ textarea {
   margin-bottom: 24px;
   align-items: start;
 }
+.challenge {
+  margin-block: 20px;
+  min-width: 0;
+}
+#verified-organizer {
+  margin: 0 0 20px;
+  overflow-wrap: anywhere;
+}
 .person-number {
   display: grid;
   place-items: center;

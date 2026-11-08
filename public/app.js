@@ -1,11 +1,24 @@
-import { decodeReveal, drawRecipients, encodeReveal } from "./draw.js";
+import { decodeReveal } from "./draw.js";
+import { loadTurnstile, post, serviceConfig } from "./api.js";
+import { formatEuropeanDate, isValidTime, parseEuropeanDate } from "./date.js";
 
 const get = (id) => document.getElementById(id);
 const participants = [];
 let exclusions = [];
 let round = null;
-let results = [];
+let sessionToken = "";
+let service = null;
+let verificationWidget;
+let roundWidget;
+let verificationId = crypto.randomUUID();
+let submission = null;
+let sending = false;
+let uncertainDelivery = false;
 let currentStep = 0;
+
+function participantLabel(person) {
+  return person.name.trim() || person.email.trim();
+}
 
 function element(tag, className, text) {
   const node = document.createElement(tag);
@@ -40,6 +53,14 @@ function showStep(step) {
   });
   get("create").scrollIntoView({ behavior: "smooth", block: "start" });
   get("add-person").disabled = step !== 1 || participants.length >= 50;
+  if (step === 1 && service && roundWidget === undefined)
+    roundWidget = window.turnstile.render("#round-challenge", {
+      sitekey: service.siteKey,
+      action: "send-round",
+      size: "flexible",
+      theme: "light",
+      language: "de",
+    });
 }
 
 function refreshExclusions() {
@@ -51,7 +72,7 @@ function refreshExclusions() {
         const option = element(
           "option",
           "",
-          person.name.trim() || `Person ${index + 1}`,
+          participantLabel(person) || `Person ${index + 1}`,
         );
         option.value = person.id;
         return option;
@@ -66,7 +87,7 @@ function refreshExclusions() {
     ...exclusions.map((pair) => {
       const names = pair.map((id) => {
         const index = participants.findIndex((person) => person.id === id);
-        return participants[index].name.trim() || `Person ${index + 1}`;
+        return participantLabel(participants[index]) || `Person ${index + 1}`;
       });
       const row = element("li");
       const remove = element("button", "", "×");
@@ -91,12 +112,31 @@ function renderParticipants() {
     ...participants.map((person, index) => {
       const row = element("div", "person-row");
       const fields = element("div", "person-fields");
-      const nameLabel = element("label", "", `Person ${index + 1}`);
+      const emailLabel = element("label", "", `E-Mail-Adresse ${index + 1}`);
+      const emailInput = element("input");
+      emailInput.id = `email-${person.id}`;
+      emailInput.name = emailInput.id;
+      emailInput.type = "email";
+      emailInput.required = true;
+      emailInput.maxLength = 254;
+      emailInput.autocomplete = "email";
+      emailInput.autocapitalize = "none";
+      emailInput.spellcheck = false;
+      emailInput.placeholder = "name@beispiel.de";
+      emailInput.value = person.email;
+      emailLabel.htmlFor = emailInput.id;
+      emailInput.addEventListener("input", () => {
+        person.email = emailInput.value;
+        for (const participant of participants)
+          get(`email-${participant.id}`).setCustomValidity("");
+        refreshExclusions();
+      });
+      const nameLabel = element("label", "", "Name");
+      nameLabel.append(element("span", "", "optional"));
       const nameInput = element("input");
       nameInput.id = `name-${person.id}`;
       nameInput.name = nameInput.id;
       nameInput.maxLength = 60;
-      nameInput.required = true;
       nameInput.autocomplete = "off";
       nameInput.placeholder =
         ["Zum Beispiel: Alex", "Zum Beispiel: Kim", "Zum Beispiel: Sam"][
@@ -131,7 +171,14 @@ function renderParticipants() {
         renderParticipants();
         get("add-person").focus();
       });
-      fields.append(nameLabel, nameInput, wishLabel, wishInput);
+      fields.append(
+        emailLabel,
+        emailInput,
+        nameLabel,
+        nameInput,
+        wishLabel,
+        wishInput,
+      );
       row.append(
         element("span", "person-number", String(index + 1).padStart(2, "0")),
         fields,
@@ -146,137 +193,194 @@ function renderParticipants() {
 
 function addParticipant() {
   if (participants.length >= 50) return;
-  participants.push({ id: crypto.randomUUID(), name: "", wish: "" });
+  participants.push({ id: crypto.randomUUID(), email: "", name: "", wish: "" });
   renderParticipants();
 }
 
 function readRound() {
   return {
     round: get("round-name").value.trim(),
-    date: get("round-date").value,
+    date: parseEuropeanDate(get("round-date").value.trim()),
+    time: get("round-time").value.trim(),
     budget: get("budget").value ? String(Number(get("budget").value)) : "",
     currency: get("currency").value,
     message: get("round-message").value.trim(),
   };
 }
 
-function showManualCopy(link) {
-  let wrapper = get("manual-copy");
-  if (!wrapper) {
-    wrapper = element("div", "manual-copy");
-    wrapper.id = "manual-copy";
-    const label = element("label", "", "Diesen Link manuell kopieren:");
-    label.htmlFor = "manual-copy-value";
-    const input = element("input");
-    input.id = "manual-copy-value";
-    input.readOnly = true;
-    wrapper.append(label, input);
-    get("result-list").after(wrapper);
-  }
-  const input = get("manual-copy-value");
-  input.value = link;
-  input.focus();
-  input.select();
+function lockPeople(locked) {
+  get("people-panel")
+    .querySelectorAll("input, textarea, select, button")
+    .forEach((control) => {
+      if (control.id !== "draw-button") control.disabled = locked;
+    });
+  if (!locked) get("add-person").disabled = participants.length >= 50;
 }
 
-async function copyResult(result, button) {
-  try {
-    await navigator.clipboard.writeText(result.link);
-    button.textContent = "Kopiert ✓";
-    showStatus(`Los-Link für ${result.name} kopiert.`);
-    setTimeout(() => {
-      button.textContent = "Link kopieren ↗";
-    }, 2500);
-  } catch {
-    showManualCopy(result.link);
-    showStatus(
-      "Automatisches Kopieren ist hier nicht verfügbar. Kopiere den markierten Link.",
-    );
-  }
-}
-
-function renderResults() {
-  get("result-list").replaceChildren(
-    ...results.map((result) => {
-      const row = element("div", "result-row");
-      const copy = element("button", "button secondary", "Link kopieren ↗");
-      copy.type = "button";
-      copy.setAttribute("aria-label", `Los-Link für ${result.name} kopieren`);
-      copy.addEventListener("click", () => copyResult(result, copy));
-      row.append(element("strong", "", result.name), copy);
-      return row;
-    }),
-  );
-}
-
-function createDraw() {
+async function createDraw() {
+  if (sending) return;
   if (participants.length < 3) {
-    showStatus("Für eine Wichtelrunde brauchst du mindestens 3 Menschen.");
+    showStatus("Für eine Wichtelrunde brauchst du mindestens 3 Personen.");
     return;
   }
-  const seenNames = new Set();
+  const seenEmails = new Set();
   for (const person of participants) {
-    const name = person.name.trim().normalize("NFC").toLocaleLowerCase("de");
-    if (!name || seenNames.has(name)) {
-      const input = get(`name-${person.id}`);
-      input.setCustomValidity(
-        name
-          ? "Bitte verwende unterschiedliche Namen, zum Beispiel Alex M. und Alex S."
-          : "Bitte gib einen Namen ein.",
-      );
+    const email = person.email.trim().toLowerCase();
+    if (seenEmails.has(email)) {
+      const input = get(`email-${person.id}`);
+      input.setCustomValidity("Diese E-Mail-Adresse ist bereits eingetragen.");
       input.reportValidity();
       return;
     }
-    seenNames.add(name);
+    seenEmails.add(email);
   }
-  const assignments = drawRecipients(participants, exclusions);
-  if (!assignments) {
-    showStatus(
-      "Mit diesen Ausschlüssen ist keine Auslosung möglich. Entferne einen Ausschluss oder füge weitere Personen hinzu.",
-    );
+  const turnstileToken = window.turnstile.getResponse(roundWidget);
+  if (!turnstileToken) {
+    showStatus("Bitte schließe die Sicherheitsprüfung ab.");
     return;
   }
-  const baseUrl = new URL("./", location.href);
-  results = participants.map((giver) => {
-    const recipient = participants.find(
-      (person) => person.id === assignments.get(giver.id),
-    );
-    const payload = {
-      version: 1,
-      ...round,
-      giver: giver.name.trim(),
-      recipient: recipient.name.trim(),
-      wish: recipient.wish.trim(),
+  if (!submission)
+    submission = {
+      id: crypto.randomUUID(),
+      round: structuredClone({ ...round, participants, exclusions }),
     };
-    const link = new URL(baseUrl);
-    link.hash = `los=${encodeReveal(payload)}`;
-    return { name: giver.name.trim(), link: link.href };
-  });
-  renderResults();
-  showStep(2);
+  sending = true;
+  lockPeople(true);
+  get("draw-button").disabled = true;
+  showStatus("Die Runde wird ausgelost und der Versand wird beauftragt.");
+  try {
+    const result = await post("/rounds", {
+      ...submission,
+      sessionToken,
+      turnstileToken,
+    });
+    get("delivery-summary").textContent =
+      `${result.accepted} E-Mails wurden vom Versanddienst angenommen.`;
+    get("result-list").replaceChildren(
+      ...submission.round.participants.map((person) => {
+        const row = element("div", "result-row");
+        row.append(
+          element("strong", "", person.email),
+          element("span", "", "Angenommen"),
+        );
+        return row;
+      }),
+    );
+    showStep(2);
+  } catch (error) {
+    showStatus(error.message);
+    if (!uncertainDelivery && [400, 403, 429].includes(error.status)) {
+      submission = null;
+      lockPeople(false);
+    } else {
+      uncertainDelivery = true;
+      get("draw-button").textContent = "Versand erneut prüfen";
+    }
+  } finally {
+    sending = false;
+    get("draw-button").disabled = currentStep !== 1;
+    window.turnstile.reset(roundWidget);
+  }
 }
 
-function downloadLinks() {
-  const text = [
-    round.round,
-    "",
-    "Teile jeden Los-Link nur mit der zugehörigen Person. Wer den Link hat, kann das Los sehen.",
-    "",
-    ...results.flatMap((result) => [result.name, result.link, ""]),
-  ].join("\n");
-  const url = URL.createObjectURL(
-    new Blob([text], { type: "text/plain;charset=utf-8" }),
-  );
-  const link = element("a");
-  link.href = url;
-  link.download = "santastic-los-links.txt";
-  document.body.append(link);
-  link.click();
-  link.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
-  showStatus(
-    "Die Link-Datei wurde zum Download bereitgestellt. Bewahre sie für eure Runde auf.",
-  );
+async function initializeEmail() {
+  const status = get("verification-status");
+  const incomingToken = location.hash.startsWith("#verify=")
+    ? location.hash.slice(8)
+    : "";
+  if (incomingToken)
+    history.replaceState(null, "", location.pathname + location.search);
+  try {
+    service = await serviceConfig();
+    if (!service.enabled) {
+      status.textContent =
+        "Der E-Mail-Versand ist noch nicht eingerichtet. Zurzeit können keine neuen Runden erstellt werden.";
+      get("verification-form").hidden = true;
+      return;
+    }
+    if (incomingToken) {
+      sessionToken = incomingToken;
+      const session = await post("/session", { token: sessionToken });
+      await loadTurnstile();
+      get("verification-panel").hidden = true;
+      get("round-builder").hidden = false;
+      get("verified-organizer").textContent = `Bestätigt: ${session.email}`;
+      showStep(0);
+      return;
+    }
+    await loadTurnstile();
+    verificationWidget = window.turnstile.render("#verification-challenge", {
+      sitekey: service.siteKey,
+      action: "verify-email",
+      size: "flexible",
+      theme: "light",
+      language: "de",
+    });
+    get("verify-email").disabled = false;
+    status.textContent = "";
+  } catch (error) {
+    status.textContent = error.message;
+    if (incomingToken) {
+      const restart = element(
+        "a",
+        "text-button",
+        "Neuen Bestätigungslink anfordern",
+      );
+      restart.href = "./";
+      status.append(element("br"), restart);
+    }
+  }
+}
+
+get("verification-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const button = get("verify-email");
+  const status = get("verification-status");
+  const turnstileToken = window.turnstile.getResponse(verificationWidget);
+  if (!turnstileToken) {
+    status.textContent = "Bitte schließe die Sicherheitsprüfung ab.";
+    return;
+  }
+  button.disabled = true;
+  get("organizer-email").disabled = true;
+  try {
+    await post("/verification", {
+      id: verificationId,
+      email: get("organizer-email").value.trim(),
+      turnstileToken,
+    });
+    get("verification-form").hidden = true;
+    status.textContent =
+      "Öffne den Bestätigungslink in deiner E-Mail. Prüfe auch den Spamordner. An die Gruppe wurde noch nichts verschickt.";
+  } catch (error) {
+    status.textContent = error.message;
+    button.disabled = false;
+    get("organizer-email").disabled = false;
+  } finally {
+    window.turnstile.reset(verificationWidget);
+  }
+});
+get("organizer-email").addEventListener("input", () => {
+  verificationId = crypto.randomUUID();
+});
+
+function openBlock() {
+  get("organizer").hidden = true;
+  get("block-view").hidden = false;
+  document.querySelector("nav").hidden = true;
+  const token = location.hash.slice(7);
+  get("block-email").addEventListener("click", async () => {
+    get("block-email").disabled = true;
+    try {
+      await post("/block", { token });
+      get("block-status").textContent =
+        "Weitere E-Mails an diese Adresse sind gesperrt. Bereits beauftragte E-Mails können noch ankommen.";
+      get("block-email").hidden = true;
+    } catch (error) {
+      get("block-status").textContent = error.message;
+      get("block-email").disabled = false;
+    }
+  });
 }
 
 function addRevealDetail(title, text) {
@@ -313,13 +417,8 @@ function openReveal() {
               currency: data.currency,
             }).format(Number(data.budget)),
           );
-        if (data.date)
-          addRevealDetail(
-            "Datum",
-            new Intl.DateTimeFormat("de-DE", { dateStyle: "long" }).format(
-              new Date(`${data.date}T12:00:00`),
-            ),
-          );
+        if (data.date) addRevealDetail("Datum", formatEuropeanDate(data.date));
+        if (data.time) addRevealDetail("Uhrzeit", `${data.time} Uhr`);
         addRevealDetail("Nachricht an eure Runde", data.message);
         get("revealed-content").hidden = false;
         get("recipient-name").tabIndex = -1;
@@ -339,6 +438,20 @@ get("round-form").addEventListener("submit", (event) => {
   event.preventDefault();
   if (currentStep === 0) {
     round = readRound();
+    if (round.date === null) {
+      get("round-date").setCustomValidity(
+        "Bitte gib ein gültiges Datum als TT.MM.JJJJ ein.",
+      );
+      get("round-date").reportValidity();
+      return;
+    }
+    if (!isValidTime(round.time) || (round.time && !round.date)) {
+      get("round-time").setCustomValidity(
+        "Bitte gib eine Uhrzeit als HH:MM und ein Datum ein.",
+      );
+      get("round-time").reportValidity();
+      return;
+    }
     if (!round.round) {
       get("round-name").setCustomValidity("Bitte gib eurer Runde einen Namen.");
       get("round-name").reportValidity();
@@ -350,9 +463,15 @@ get("round-form").addEventListener("submit", (event) => {
 get("round-name").addEventListener("input", () =>
   get("round-name").setCustomValidity(""),
 );
+for (const id of ["round-date", "round-time"]) {
+  get(id).addEventListener("input", () => {
+    get("round-date").setCustomValidity("");
+    get("round-time").setCustomValidity("");
+  });
+}
 get("add-person").addEventListener("click", () => {
   addParticipant();
-  get(`name-${participants.at(-1).id}`).focus();
+  get(`email-${participants.at(-1).id}`).focus();
 });
 get("back-details").addEventListener("click", () => showStep(0));
 get("add-exclusion").addEventListener("click", () => {
@@ -373,7 +492,6 @@ get("add-exclusion").addEventListener("click", () => {
     "Ausschluss hinzugefügt. Diese Personen ziehen sich nicht gegenseitig.",
   );
 });
-get("download-links").addEventListener("click", downloadLinks);
 get("restart").addEventListener("click", () =>
   get("restart-dialog").showModal(),
 );
@@ -386,20 +504,23 @@ get("confirm-restart").addEventListener("click", () => {
   participants.splice(0);
   exclusions = [];
   round = null;
-  results = [];
+  submission = null;
+  uncertainDelivery = false;
+  get("draw-button").textContent = "Auslosen und E-Mails senden";
   get("result-list").replaceChildren();
-  get("manual-copy")?.remove();
   for (let index = 0; index < 3; index += 1) addParticipant();
   showStep(0);
 });
 
 window.addEventListener("hashchange", () => {
-  if (location.hash.startsWith("#los=")) location.reload();
+  if (/^#(los|verify|block)=/.test(location.hash)) location.reload();
 });
 
 if (location.hash.startsWith("#los=")) openReveal();
+else if (location.hash.startsWith("#block=")) openBlock();
 else {
   for (let index = 0; index < 3; index += 1) addParticipant();
+  initializeEmail();
   get("people-panel")
     .querySelectorAll("input, textarea, select, button")
     .forEach((control) => {

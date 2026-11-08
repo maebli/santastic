@@ -1,0 +1,30 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "santastic-api",
+  "main": "server/worker.js",
+  "compatibility_date": "2026-11-08",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "vars": {
+    "SITE_URL": "https://maebli.github.io/santastic/",
+    "EMAIL_FROM": "",
+    "TURNSTILE_SITE_KEY": "",
+    "SENDING_ENABLED": "false",
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "santastic",
+      "migrations_dir": "server/migrations",
+    },
+  ],
+  "ratelimits": [
+    {
+      "name": "REQUEST_LIMITER",
+      "namespace_id": "204891",
+      "simple": { "limit": 10, "period": 60 },
+    },
+  ],
+  "triggers": { "crons": ["17 * * * *"] },
+  "observability": { "enabled": true, "head_sampling_rate": 0.1 },
+}
