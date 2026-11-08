@@ -117,7 +117,7 @@ function renderParticipants() {
       wishInput.rows = 1;
       wishInput.maxLength = 300;
       wishInput.value = person.wish;
-      wishInput.placeholder = "Mag Kaffee, Bücher und kleine Überraschungen …";
+      wishInput.placeholder = "Zum Beispiel: Kaffee oder ein Buch";
       wishLabel.htmlFor = wishInput.id;
       wishInput.addEventListener("input", () => {
         person.wish = wishInput.value;
@@ -298,14 +298,12 @@ function openReveal() {
       "click",
       () => {
         get("reveal-button").hidden = true;
-        get("sealed-gift").hidden = true;
-        get("reveal-title").textContent = "Das bleibt unter euch.";
+        get("reveal-title").textContent = "Deine Zuordnung";
         get("recipient-name").textContent = data.recipient;
         get("reveal-details").replaceChildren();
         addRevealDetail(
           "Wunschzettel",
-          data.wish ||
-            "Lass dich von einer kleinen, persönlichen Aufmerksamkeit inspirieren.",
+          data.wish || "Kein Wunschzettel angegeben.",
         );
         if (data.budget)
           addRevealDetail(
@@ -317,7 +315,7 @@ function openReveal() {
           );
         if (data.date)
           addRevealDetail(
-            "Dann wird ausgepackt",
+            "Datum",
             new Intl.DateTimeFormat("de-DE", { dateStyle: "long" }).format(
               new Date(`${data.date}T12:00:00`),
             ),
@@ -334,7 +332,6 @@ function openReveal() {
     get("reveal-greeting").textContent =
       "Der Link ist unvollständig oder ungültig. Bitte die Organisation um deinen vollständigen Los-Link.";
     get("reveal-button").hidden = true;
-    get("sealed-gift").hidden = true;
   }
 }
 

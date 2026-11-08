@@ -3,17 +3,17 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#153f35" />
+    <meta name="theme-color" content="#f7f8f5" />
     <meta
       name="description"
-      content="Weniger organisieren, mehr Vorfreude. Erstelle deine Wichtelrunde mit Wunschzetteln, Ausschlüssen und persönlichen Los-Links. Kostenlos und ohne Anmeldung."
+      content="Wichtelgruppen mit 3 bis 50 Personen auslosen. Mit Wunschzetteln, Ausschlüssen und persönlichen Ergebnislinks, ohne Anmeldung."
     />
     <meta name="referrer" content="no-referrer" />
     <meta
       http-equiv="Content-Security-Policy"
       content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'"
     />
-    <title>Santastic — Kleine Geschenke. Große Vorfreude.</title>
+    <title>Santastic — Wichteln auslosen</title>
     <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
     <link rel="stylesheet" href="./styles.css" />
     <script type="module" src="./app.js"></script>
@@ -28,84 +28,19 @@
         ></a
       >
       <nav aria-label="Hauptnavigation">
-        <a href="#how-it-works">So geht’s</a
-        ><a href="#questions">Fragen & Antworten</a
-        ><a class="nav-cta" href="#create"
-          >Wichtelrunde starten <span aria-hidden="true">↗</span></a
-        >
+        <a href="#create">Runde erstellen</a>
+        <a href="#questions">Fragen & Antworten</a>
       </nav>
     </header>
     <main id="main">
       <div id="organizer">
         <section class="hero shell" aria-labelledby="hero-title">
-          <div class="hero-copy">
-            <p class="eyebrow">
-              <span class="tiny-star" aria-hidden="true">✳</span> FÜR DEINE
-              LIEBLINGSMENSCHEN
-            </p>
-            <h1 id="hero-title">Kleine Geste.<br />Große <em>Freude.</em></h1>
-            <p class="hero-description">
-              Die schönste Überraschung beginnt mit einem Los.<br
-                class="desktop-break"
-              />
-              Bring deine Menschen zusammen. Wir mischen die Namen.
-            </p>
-            <a href="#create" class="button primary"
-              >Lasst uns wichteln <span aria-hidden="true">↗</span></a
-            >
-            <p class="hero-note">
-              <span aria-hidden="true">✓</span> Kostenlos
-              <span class="note-dot">·</span> Ohne Anmeldung
-              <span class="note-dot">·</span> Einfach persönlich
-            </p>
-          </div>
-          <div class="hero-art" aria-hidden="true">
-            <div class="art-halo"></div>
-            <span class="art-star">✳</span>
-            <div class="art-stamp">
-              FÜR DEINE<br /><strong>LIEBLINGS-<br />MENSCHEN</strong>
-            </div>
-            <img
-              class="gift-artwork"
-              src="./gifts.webp"
-              alt=""
-              width="1024"
-              height="1024"
-              fetchpriority="high"
-            />
-            <div class="art-label">
-              <span>♡</span> Ein Los. Ein Lächeln. Ein kleines Geheimnis.
-            </div>
-          </div>
-        </section>
-        <section
-          class="steps-strip shell"
-          id="how-it-works"
-          aria-label="So funktioniert Santastic"
-        >
-          <div>
-            <span class="step-icon">01</span>
-            <p>
-              <strong>Deine Menschen</strong
-              ><span>Namen rein, Vorfreude an.</span>
-            </p>
-          </div>
-          <span class="step-arrow" aria-hidden="true">⟶</span>
-          <div>
-            <span class="step-icon">02</span>
-            <p>
-              <strong>Ein bisschen Magie</strong
-              ><span>Wir losen aus. Niemand zieht sich selbst.</span>
-            </p>
-          </div>
-          <span class="step-arrow" aria-hidden="true">⟶</span>
-          <div>
-            <span class="step-icon">03</span>
-            <p>
-              <strong>Geheimnis teilen</strong
-              ><span>Jede Person bekommt ihren Los-Link.</span>
-            </p>
-          </div>
+          <h1 id="hero-title">Wichteln auslosen</h1>
+          <p>
+            Trage die Namen eurer Gruppe ein und lege bei Bedarf ein Budget und
+            Ausschlüsse fest. Nach der Auslosung erhält jede Person einen
+            eigenen Link mit ihrer Zuordnung.
+          </p>
         </section>
         <section
           class="create-section shell"
@@ -113,43 +48,29 @@
           aria-labelledby="create-title"
         >
           <aside class="section-intro">
-            <p class="eyebrow">DIE GUTE LAUNE BEGINNT HIER</p>
-            <h2 id="create-title">Deine Menschen.<br /><em>Eure Magie.</em></h2>
+            <h2 id="create-title">Neue Wichtelrunde</h2>
             <p>
-              Ob Freundeskreis, Familie oder Team: Die besten Geschenke kommen
-              von Herzen.
+              Für 3 bis 50 Personen. Wunschzettel, Datum und Budget sind
+              optional.
             </p>
-            <div class="privacy-note">
-              <span aria-hidden="true">⌁</span>
-              <div>
-                <strong>Eure Namen bleiben bei euch.</strong>
-                <p>
-                  Die Auslosung läuft in deinem Browser. Kein Konto, keine
-                  Teilnehmer-Datenbank.
-                </p>
-              </div>
-            </div>
-            <div class="handwritten" aria-hidden="true">
-              Wer darf’s dieses Jahr sein? <span>↝</span>
-            </div>
+            <p>
+              Die Auslosung findet in deinem Browser statt. Du teilst die
+              Ergebnislinks selbst; Santastic verschickt keine E-Mails.
+            </p>
           </aside>
           <div class="builder-card">
             <ol class="wizard-progress" aria-label="Fortschritt">
-              <li class="active" aria-current="step">
-                <span>1</span>Die Runde
-              </li>
-              <li><span>2</span>Die Menschen</li>
-              <li><span>3</span>Die Lose</li>
+              <li class="active" aria-current="step"><span>1</span>Runde</li>
+              <li><span>2</span>Personen</li>
+              <li><span>3</span>Ergebnis</li>
             </ol>
             <form id="round-form">
               <section id="details-panel" aria-labelledby="details-title">
                 <div class="panel-heading">
-                  <h3 id="details-title" tabindex="-1">
-                    Alles beginnt mit eurer Runde.
-                  </h3>
-                  <p>Gib eurer Vorfreude einen Namen.</p>
+                  <h3 id="details-title" tabindex="-1">Angaben zur Runde</h3>
+                  <p>Name, Termin und Budget für eure Gruppe.</p>
                 </div>
-                <label for="round-name">Wie heißt eure Wichtelrunde?</label
+                <label for="round-name">Name der Runde</label
                 ><input
                   id="round-name"
                   name="roundName"
@@ -160,8 +81,7 @@
                 />
                 <div class="field-grid">
                   <div>
-                    <label for="round-date"
-                      >Wann wird ausgepackt? <span>optional</span></label
+                    <label for="round-date">Datum <span>optional</span></label
                     ><input
                       id="round-date"
                       name="date"
@@ -201,21 +121,16 @@
                   name="message"
                   rows="3"
                   maxlength="500"
-                  placeholder="Selbstgemacht, secondhand oder einfach mit Liebe ausgesucht …"
+                  placeholder="Zum Beispiel: Wir tauschen die Geschenke beim Abendessen."
                 ></textarea>
                 <div class="form-footer">
-                  <span>Der Anfang von etwas Schönem.</span
-                  ><button class="button primary" type="submit">
-                    Weiter zu den Menschen <span aria-hidden="true">→</span>
-                  </button>
+                  <button class="button primary" type="submit">Weiter</button>
                 </div>
               </section>
               <section id="people-panel" hidden aria-labelledby="people-title">
                 <div class="panel-heading">
-                  <h3 id="people-title" tabindex="-1">Wer ist dabei?</h3>
-                  <p>
-                    3 bis 50 Menschen. Ein Wunschzettel hilft beim Schenken.
-                  </p>
+                  <h3 id="people-title" tabindex="-1">Personen</h3>
+                  <p>Trage die Namen ein. Wunschzettel sind optional.</p>
                 </div>
                 <div id="participants"></div>
                 <button id="add-person" class="button add-button" type="button">
@@ -257,17 +172,15 @@
                     class="button primary"
                     id="draw-button"
                   >
-                    Jetzt auslosen <span aria-hidden="true">✧</span>
+                    Auslosen
                   </button>
                 </div>
               </section>
             </form>
             <section id="results-panel" hidden aria-labelledby="results-title">
               <div class="panel-heading">
-                <span class="success-badge">✓ Die Lose sind gezogen</span>
-                <h3 id="results-title" tabindex="-1">
-                  Vorfreude zum Weitergeben.
-                </h3>
+                <span class="success-badge">✓ Ergebnis sind gezogen</span>
+                <h3 id="results-title" tabindex="-1">Ergebnislinks</h3>
                 <p>
                   Schicke jeder Person ihren eigenen Link. Die Zuordnung bleibt
                   beim erneuten Öffnen gleich.
@@ -287,7 +200,7 @@
                   class="button primary"
                   type="button"
                 >
-                  Alle Links speichern <span aria-hidden="true">↓</span>
+                  Links speichern
                 </button>
               </div>
             </section>
@@ -305,8 +218,7 @@
           aria-labelledby="faq-title"
         >
           <div>
-            <p class="eyebrow">GUT ZU WISSEN</p>
-            <h2 id="faq-title">Noch ein kleines<br />Fragezeichen?</h2>
+            <h2 id="faq-title">Fragen & Antworten</h2>
           </div>
           <div class="faq-list">
             <details>
@@ -365,15 +277,13 @@
         aria-labelledby="reveal-title"
       >
         <div class="reveal-card">
-          <p class="eyebrow">EIN KLEINES GEHEIMNIS FÜR DICH</p>
-          <h1 id="reveal-title">Dein Wichtellos wartet.</h1>
+          <h1 id="reveal-title">Dein Wichtellos</h1>
           <p id="reveal-greeting"></p>
-          <div id="sealed-gift" class="sealed-gift" aria-hidden="true">✧</div>
           <button id="reveal-button" class="button primary" type="button">
-            Mein Los öffnen <span aria-hidden="true">↗</span>
+            Zuordnung anzeigen
           </button>
           <div id="revealed-content" hidden>
-            <p class="eyebrow">DU SCHENKST DIESES JAHR AN</p>
+            <p>Du beschenkst:</p>
             <h2 id="recipient-name"></h2>
             <div id="reveal-details"></div>
           </div>
@@ -385,8 +295,7 @@
     </main>
     <footer class="site-footer shell">
       <a class="brand" href="./">santastic<span class="brand-dot">.</span></a>
-      <p>Weniger organisieren. Mehr Freude schenken.</p>
-      <span>Mit ♡ und ein bisschen Wichtelmagie.</span>
+      <a href="#questions">Hinweise zu Ablauf und Daten</a>
     </footer>
     <dialog id="restart-dialog">
       <h3>Eine neue Runde starten?</h3>
