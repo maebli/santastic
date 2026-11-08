@@ -100,7 +100,7 @@ nav a:hover {
 .hero {
   width: 100%;
   display: grid;
-  grid-template-columns: 1.1fr 1fr;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
   min-height: 610px;
   align-items: center;
   gap: 15px;
@@ -110,6 +110,7 @@ nav a:hover {
   overflow: hidden;
 }
 .hero-copy {
+  min-width: 0;
   position: relative;
   z-index: 1;
 }
@@ -878,7 +879,7 @@ dialog p {
 }
 @media (max-width: 1100px) {
   .hero {
-    grid-template-columns: 1.1fr 1fr;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
     min-height: 540px;
   }
   .hero-art {
@@ -936,7 +937,7 @@ dialog p {
   }
   .hero {
     width: 100%;
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     padding: 32px 25px 40px;
   }
   .hero-copy {
@@ -950,8 +951,9 @@ dialog p {
     margin-inline: auto;
   }
   .hero-art {
-    width: 480px;
-    max-width: 100%;
+    width: 100%;
+    max-width: 480px;
+    min-width: 0;
     min-height: 430px;
     margin: 20px auto 0;
   }
@@ -983,15 +985,12 @@ dialog p {
     font-size: 14px;
   }
   .create-section {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 28px;
     padding-block: 48px 60px;
   }
   .section-intro {
     text-align: center;
-  }
-  .section-intro h2 br {
-    display: none;
   }
   .section-intro > p:not(.eyebrow) {
     max-width: 440px;
@@ -1006,12 +1005,9 @@ dialog p {
     margin-inline: auto;
   }
   .faq-section {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 15px;
     padding-block: 35px 45px;
-  }
-  .faq-section h2 br {
-    display: none;
   }
   .site-footer {
     width: 100%;
@@ -1135,7 +1131,7 @@ dialog p {
     font-size: 11px;
   }
   .field-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
   .form-footer .button {
     padding-inline: 13px;
