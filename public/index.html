@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f8f6ef" />
+    <meta
+      name="description"
+      content="Weniger organisieren, mehr Vorfreude. Erstelle deine Wichtelrunde mit Wunschzetteln, Ausschlüssen und persönlichen Los-Links. Kostenlos und ohne Anmeldung."
+    />
+    <meta name="referrer" content="no-referrer" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'"
+    />
+    <title>Santastic — Kleine Geschenke. Große Vorfreude.</title>
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <link rel="stylesheet" href="./styles.css" />
+    <script type="module" src="./app.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Zum Inhalt</a>
+    <header class="site-header shell">
+      <a class="brand" href="./" aria-label="Santastic Startseite"
+        ><img src="./favicon.svg" alt="" width="34" height="34" />santastic<span
+          class="brand-dot"
+          >.</span
+        ></a
+      >
+      <nav aria-label="Hauptnavigation">
+        <a href="#how-it-works">So geht’s</a
+        ><a href="#questions">Fragen & Antworten</a
+        ><a class="nav-cta" href="#create"
+          >Wichtelrunde starten <span aria-hidden="true">↗</span></a
+        >
+      </nav>
+    </header>
+    <main id="main">
+      <div id="organizer">
+        <section class="hero shell" aria-labelledby="hero-title">
+          <div class="hero-copy">
+            <p class="eyebrow">
+              <span class="tiny-star" aria-hidden="true">✳</span> FÜR DEINE
+              LIEBLINGSMENSCHEN
+            </p>
+            <h1 id="hero-title">
+              Kleine Geschenke.<br />Große <em>Vorfreude.</em>
+            </h1>
+            <p class="hero-description">
+              Die schönste Überraschung beginnt mit einem Los.<br
+                class="desktop-break"
+              />
+              Bring deine Menschen zusammen. Wir mischen die Namen.
+            </p>
+            <a href="#create" class="button primary"
+              >Lasst uns wichteln <span aria-hidden="true">↗</span></a
+            >
+            <p class="hero-note">
+              <span aria-hidden="true">✓</span> Kostenlos
+              <span class="note-dot">·</span> Ohne Anmeldung
+              <span class="note-dot">·</span> Einfach persönlich
+            </p>
+          </div>
+          <div class="hero-art" aria-hidden="true">
+            <div class="art-orbit"></div>
+            <span class="art-spark spark-one">✦</span
+            ><span class="art-spark spark-two">✧</span
+            ><span class="art-spark spark-three">✳</span>
+            <div class="floating-note note-top">
+              <span class="green-dot"></span> Pssst … dein Los ist da!
+            </div>
+            <div class="gift gift-small">
+              <div class="gift-bow"></div>
+              <div class="gift-lid"></div>
+              <div class="gift-ribbon"></div>
+            </div>
+            <div class="gift gift-large">
+              <div class="gift-bow"></div>
+              <div class="gift-lid"></div>
+              <div class="gift-ribbon"></div>
+              <div class="gift-tag">für dich ♡</div>
+            </div>
+            <div class="floating-note note-bottom">
+              <span>♡</span> Ein kleines Geschenk. Viel Freude.
+            </div>
+            <div class="art-caption">mit Liebe ausgelost</div>
+          </div>
+        </section>
+        <section
+          class="steps-strip shell"
+          id="how-it-works"
+          aria-label="So funktioniert Santastic"
+        >
+          <div>
+            <span class="step-icon">01</span>
+            <p>
+              <strong>Deine Menschen</strong
+              ><span>Namen rein, Vorfreude an.</span>
+            </p>
+          </div>
+          <span class="step-arrow" aria-hidden="true">⟶</span>
+          <div>
+            <span class="step-icon">02</span>
+            <p>
+              <strong>Ein bisschen Magie</strong
+              ><span>Wir losen aus. Niemand zieht sich selbst.</span>
+            </p>
+          </div>
+          <span class="step-arrow" aria-hidden="true">⟶</span>
+          <div>
+            <span class="step-icon">03</span>
+            <p>
+              <strong>Geheimnis teilen</strong
+              ><span>Jede Person bekommt ihren Los-Link.</span>
+            </p>
+          </div>
+        </section>
+        <section
+          class="create-section shell"
+          id="create"
+          aria-labelledby="create-title"
+        >
+          <aside class="section-intro">
+            <p class="eyebrow">EIN PAAR KLICKS BIS ZUR VORFREUDE</p>
+            <h2 id="create-title">Eure Runde.<br />Eure Tradition.</h2>
+            <p>
+              Ob Freundeskreis, Familie oder Team: Die besten Geschenke kommen
+              von Herzen.
+            </p>
+            <div class="privacy-note">
+              <span aria-hidden="true">⌁</span>
+              <div>
+                <strong>Eure Namen bleiben bei euch.</strong>
+                <p>
+                  Die Auslosung läuft in deinem Browser. Kein Konto, keine
+                  Teilnehmer-Datenbank.
+                </p>
+              </div>
+            </div>
+            <div class="handwritten" aria-hidden="true">
+              Wer darf’s dieses Jahr sein? <span>↝</span>
+            </div>
+          </aside>
+          <div class="builder-card">
+            <ol class="wizard-progress" aria-label="Fortschritt">
+              <li class="active" aria-current="step">
+                <span>1</span>Die Runde
+              </li>
+              <li><span>2</span>Die Menschen</li>
+              <li><span>3</span>Die Lose</li>
+            </ol>
+            <form id="round-form">
+              <section id="details-panel" aria-labelledby="details-title">
+                <div class="panel-heading">
+                  <h3 id="details-title" tabindex="-1">
+                    Alles beginnt mit eurer Runde.
+                  </h3>
+                  <p>Gib eurer Vorfreude einen Namen.</p>
+                </div>
+                <label for="round-name">Wie heißt eure Wichtelrunde?</label
+                ><input
+                  id="round-name"
+                  name="roundName"
+                  placeholder="Zum Beispiel: Weihnachten bei uns"
+                  maxlength="80"
+                  required
+                  autocomplete="off"
+                />
+                <div class="field-grid">
+                  <div>
+                    <label for="round-date"
+                      >Wann wird ausgepackt? <span>optional</span></label
+                    ><input
+                      id="round-date"
+                      name="date"
+                      type="date"
+                      max="9999-12-31"
+                    />
+                  </div>
+                  <div>
+                    <label for="budget"
+                      >Geschenkbudget <span>optional</span></label
+                    >
+                    <div class="budget-field">
+                      <input
+                        id="budget"
+                        name="budget"
+                        type="number"
+                        min="0"
+                        max="10000"
+                        step="0.01"
+                        placeholder="25"
+                      /><select
+                        id="currency"
+                        name="currency"
+                        aria-label="Währung"
+                      >
+                        <option>EUR</option>
+                        <option>CHF</option>
+                        <option>USD</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <label for="round-message"
+                  >Eine Nachricht an alle <span>optional</span></label
+                ><textarea
+                  id="round-message"
+                  name="message"
+                  rows="3"
+                  maxlength="500"
+                  placeholder="Selbstgemacht, secondhand oder einfach mit Liebe ausgesucht …"
+                ></textarea>
+                <div class="form-footer">
+                  <span>Der Anfang von etwas Schönem.</span
+                  ><button class="button primary" type="submit">
+                    Weiter zu den Menschen <span aria-hidden="true">→</span>
+                  </button>
+                </div>
+              </section>
+              <section id="people-panel" hidden aria-labelledby="people-title">
+                <div class="panel-heading">
+                  <h3 id="people-title" tabindex="-1">Wer ist dabei?</h3>
+                  <p>
+                    3 bis 50 Menschen. Ein Wunschzettel hilft beim Schenken.
+                  </p>
+                </div>
+                <div id="participants"></div>
+                <button id="add-person" class="button add-button" type="button">
+                  <span aria-hidden="true">＋</span> Person hinzufügen
+                </button>
+                <details class="exclusions">
+                  <summary>Wer soll sich nicht gegenseitig ziehen?</summary>
+                  <p>Zum Beispiel Paare oder Menschen aus einem Haushalt.</p>
+                  <div class="exclusion-selects">
+                    <select
+                      id="exclude-first"
+                      aria-label="Erste Person"
+                    ></select
+                    ><span aria-hidden="true">↔</span
+                    ><select
+                      id="exclude-second"
+                      aria-label="Zweite Person"
+                    ></select
+                    ><button
+                      type="button"
+                      id="add-exclusion"
+                      class="button secondary"
+                      aria-label="Ausschluss hinzufügen"
+                    >
+                      ＋
+                    </button>
+                  </div>
+                  <ul id="exclusion-list"></ul>
+                </details>
+                <p class="inline-notice">
+                  Die Organisation kann alle Los-Links öffnen. Teile jeden Link
+                  nur mit der Person, für die er bestimmt ist.
+                </p>
+                <div class="form-footer">
+                  <button type="button" id="back-details" class="text-button">
+                    ← Zurück</button
+                  ><button
+                    type="submit"
+                    class="button primary"
+                    id="draw-button"
+                  >
+                    Jetzt auslosen <span aria-hidden="true">✧</span>
+                  </button>
+                </div>
+              </section>
+            </form>
+            <section id="results-panel" hidden aria-labelledby="results-title">
+              <div class="panel-heading">
+                <span class="success-badge">✓ Die Lose sind gezogen</span>
+                <h3 id="results-title" tabindex="-1">
+                  Vorfreude zum Weitergeben.
+                </h3>
+                <p>
+                  Schicke jeder Person ihren eigenen Link. Die Zuordnung bleibt
+                  beim erneuten Öffnen gleich.
+                </p>
+              </div>
+              <div id="result-list"></div>
+              <p class="inline-notice">
+                Speichere die Links vor dem Schließen dieser Seite. Sie werden
+                hier nicht dauerhaft gespeichert. Wer einen Link hat, kann das
+                Los sehen.
+              </p>
+              <div class="form-footer">
+                <button id="restart" class="text-button" type="button">
+                  Neue Runde</button
+                ><button
+                  id="download-links"
+                  class="button primary"
+                  type="button"
+                >
+                  Alle Links speichern <span aria-hidden="true">↓</span>
+                </button>
+              </div>
+            </section>
+            <p
+              id="form-status"
+              class="form-status"
+              role="status"
+              aria-live="polite"
+            ></p>
+          </div>
+        </section>
+        <section
+          class="faq-section shell"
+          id="questions"
+          aria-labelledby="faq-title"
+        >
+          <div>
+            <p class="eyebrow">GUT ZU WISSEN</p>
+            <h2 id="faq-title">Noch ein kleines<br />Fragezeichen?</h2>
+          </div>
+          <div class="faq-list">
+            <details>
+              <summary>Wie geheim ist die Auslosung?</summary>
+              <p>
+                Jeder Los-Link enthält nur die Zuordnung für eine Person, den
+                Wunschzettel des Gegenübers und die Angaben zur Runde. Wer den
+                Link hat, kann diese Angaben lesen. Auch die Organisation hat
+                Zugriff auf alle Links. Die Links sind kein Passwortschutz.
+              </p>
+            </details>
+            <details>
+              <summary>Verschickt Santastic automatisch E-Mails?</summary>
+              <p>
+                Nein. Du kopierst die persönlichen Links und teilst sie selbst
+                über einen Messenger oder per E-Mail. So brauchen wir keine
+                E-Mail-Adressen.
+              </p>
+            </details>
+            <details>
+              <summary>Kann jemand sich selbst ziehen?</summary>
+              <p>
+                Nein. Jede Person schenkt genau einer anderen Person und erhält
+                genau ein Geschenk. Eure Ausschlüsse gelten in beide Richtungen.
+                Ist keine passende Auslosung möglich, bitten wir euch, die
+                Ausschlüsse anzupassen.
+              </p>
+            </details>
+            <details>
+              <summary>Was passiert mit unseren Daten?</summary>
+              <p>
+                Die Angaben bleiben während der Erstellung im Arbeitsspeicher
+                deines Browsers. Die Losdaten stehen im Teil des Links nach dem
+                #-Zeichen. Dieser Teil wird beim Seitenaufruf nicht an den
+                Hosting-Server gesendet. GitHub Pages stellt die Seite bereit
+                und verarbeitet dabei technische Zugriffsdaten. Wir verwenden
+                keine Analyse-Tools, Cookies oder externen Schriftarten.
+              </p>
+            </details>
+            <details>
+              <summary>Kann ich einen Wunschzettel später ändern?</summary>
+              <p>
+                Die Los-Links enthalten den Stand zum Zeitpunkt der Auslosung.
+                Spätere Änderungen werden nicht synchronisiert. Ergänzungen
+                teilt ihr direkt miteinander. Eine neue Runde erzeugt neue
+                Zuordnungen; alte Links bleiben gültig.
+              </p>
+            </details>
+          </div>
+        </section>
+      </div>
+      <section
+        id="reveal-view"
+        class="reveal-section shell"
+        hidden
+        aria-labelledby="reveal-title"
+      >
+        <div class="reveal-card">
+          <p class="eyebrow">EIN KLEINES GEHEIMNIS FÜR DICH</p>
+          <h1 id="reveal-title">Dein Wichtellos wartet.</h1>
+          <p id="reveal-greeting"></p>
+          <div id="sealed-gift" class="sealed-gift" aria-hidden="true">✧</div>
+          <button id="reveal-button" class="button primary" type="button">
+            Mein Los öffnen <span aria-hidden="true">↗</span>
+          </button>
+          <div id="revealed-content" hidden>
+            <p class="eyebrow">DU SCHENKST DIESES JAHR AN</p>
+            <h2 id="recipient-name"></h2>
+            <div id="reveal-details"></div>
+          </div>
+          <a href="./" class="text-button reveal-home"
+            >Eigene Wichtelrunde starten →</a
+          >
+        </div>
+      </section>
+    </main>
+    <footer class="site-footer shell">
+      <a class="brand" href="./">santastic<span class="brand-dot">.</span></a>
+      <p>Weniger organisieren. Mehr Freude schenken.</p>
+      <span>Mit ♡ und ein bisschen Wichtelmagie.</span>
+    </footer>
+    <dialog id="restart-dialog">
+      <h3>Eine neue Runde starten?</h3>
+      <p>
+        Speichere zuerst deine aktuellen Los-Links. Die alten Links bleiben
+        gültig.
+      </p>
+      <div class="dialog-actions">
+        <button id="cancel-restart" class="button secondary" type="button">
+          Zurück</button
+        ><button id="confirm-restart" class="button primary" type="button">
+          Neue Runde starten
+        </button>
+      </div>
+    </dialog>
+    <noscript
+      ><p class="noscript-notice">
+        Bitte aktiviere JavaScript, damit die Auslosung in deinem Browser
+        stattfinden kann.
+      </p></noscript
+    >
+  </body>
+</html>
